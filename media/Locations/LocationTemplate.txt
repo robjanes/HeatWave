@@ -1,0 +1,2 @@
+Number of Locations
+LocationName,BackgroundTexture,Music,BuyTexture,BuyX,BuyY,SellTexture,SellX,SellY,HospitalTexture,HospitalX,HospitalY,TransportTexture,TransportX,TransportY,TravelMapTexture,TravelMapX,TravelMapY,PlayerX,PlayerY,BuyVisible,SellVisible,HospitalVisible,UnlockedAtCashAmount,LocationType,Resource1, Resource2, Resource3, Resource4, Resource5, SellResource1, SellResource2, SellResource3

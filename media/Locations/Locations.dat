@@ -1,0 +1,5 @@
+4
+Your House,House.png,Miami.ogg,BuyButton.png,50,300,SellButton.png,50,400,HospitalIcon.png,300,50,TravelIcon.png,800,230,HouseMapIcon.png,500,300,400,300,0,0,0,0,0,0,0,0,0,0,0,0,
+Downtown,House.png,Miami.ogg,BuyButton.png,50,400,SellButton.png,50,400,HospitalIcon.png,300,50,TravelIcon.png,600,50,DowntownMap.png,600,600,400,300,0,0,0,0,1,1,1,1,1,1,0,0,0,
+Crude Bois,Thugs.png,Miami.ogg,BuyButton.png,50,400,SellButton.png,50,400,HospitalIcon.png,300,50,TravelIcon.png,600,50,ThugsMapIcon.png,900,300,400,300,0,0,0,0,2,1,1,1,0,0,1,2,3,
+Avenue,House.png,Miami.ogg,BuyButton.png,50,400,SellButton.png,50,400,HospitalIcon.png,300,50,TravelIcon.png,600,50,AvenueMap.png,1400,800,0,0,0,0,0,100,1,1,1,1,1,1,0,0,0,

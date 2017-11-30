@@ -1,0 +1,7 @@
+Each Scene or Location has a .dat file that will have a list to every other location on a separate line. It will be broken down 
+by Travel to ID, Time To Travel (From This Position), Cost to Travel (From This Position)
+e.g
+
+1.dat would contain
+1,0,0 //0,0 for the time to travel here and the cost, since we are already at this screen!
+2,15,10 //Traveling to Location 2 from Location 1 would take 15 seconds and cost 10 dollars!

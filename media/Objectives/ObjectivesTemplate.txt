@@ -1,0 +1,2 @@
+1
+Show At LocationID|Show When User Has X Amount Of $|Objective Dialogue Here|

@@ -1,0 +1,14 @@
+13
+0,300,ButtonNewGame.png,New Game,//New Game Button
+0,400,ButtonContinue.png,Continue,//Continue Game Button
+0,400,ButtonCredits.png,Credits,//Credits Button
+680,290,MessagesIcon.png,Messages,//Button to Check Messages
+300,300,NewsIcon.png,News,//Button to Check News
+5,5,MainMenu.png,Main Menu,//Button to Return to Main Menu
+650,380,ButtonBlank.png,Accept,//Button to Accept Objectives
+5,5,Cancel.png,Cancel Map,//Cancel the Map Window
+0,0,CancelLocation.png,Cancel Location,//Cancel the Clicked Location Button
+0,0,GoToLocation.png,Go To Location,//Go to Location Button
+100,300,StashIcon.png,Stash,//Go to Stash
+0,0,ButtonBlank.png,Accept,//Button to Restart Game/Continue from Busted
+0,0,MessagesIcon.png,Sleep,//Button to Sleep
