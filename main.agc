@@ -590,6 +590,15 @@ global ViewBackgroundSleep as Integer
 global SleepAlpha as Integer
 global SleepDirection as integer
 
+//Tutorial popup
+global ImageTutorial as integer
+global ViewTutorial as integer
+global LabelTutorial as Integer
+global TutorialX as Integer
+Global TutorialY as Integer
+
+global LabelDays as Integer
+
 //Creating Falling Items
 function CreateFallingItems()
 	for i = 1 to 100
@@ -773,7 +782,7 @@ function LoadImages()
 	IntroVideo = LoadVideo("Title_Video.mp4")
 	ImageBusted = LoadImage("BustedTitle.png")
 	ImageBackgroundSleep = LoadImage("Sleep.png")
-	
+	ImageTutorial = LoadImage("TutorialRight.png")
 endfunction
 
 //Start the Moving Animation
@@ -1094,6 +1103,26 @@ function CreateLabels()
 	SetTextMaxWidth(LabelBusted,600)
 	SetTextVisible(LabelBusted,0)
 	SetTextColor(LabelBusted,255,255,255,255)
+	
+	//Create the Days Label
+	LabelDays = CreateText("Day: ")
+	SetTextFont(LabelDays,GameFont)
+	SetTextAlignment(LabelDays,1)
+	SetTextPosition(LabelDays,60,100)
+	SetTextSize(LabelDays,28)
+	SetTextMaxWidth(LabelDays,600)
+	SetTextVisible(LabelDays,0)
+	SetTextColor(LabelDays,255,255,255,255)
+
+	//Create the Days Label
+	LabelTutorial = CreateText("Placeholder Text")
+	SetTextFont(LabelTutorial,GameFont)
+	SetTextAlignment(LabelTutorial,1)
+	SetTextPosition(LabelTutorial,60,100)
+	SetTextSize(LabelTutorial,28)
+	SetTextMaxWidth(LabelTutorial,350)
+	SetTextVisible(LabelTutorial,0)
+	SetTextColor(LabelTutorial,255,255,255,255)
 		
 	//global LabelEnergy as integer
 	//global LabelMoney as integer
@@ -1129,7 +1158,7 @@ function CreateViews()
 	ViewHoverBed = CreateSprite(ImageHoverBed)
 	ViewHoverMessages = CreateSprite(ImageHoverMessages)
 	ViewHoverDoor = CreateSprite(ImageHoverDoor)
-	
+	ViewTutorial = CreateSprite(ImageTutorial)
 	AddSpriteAnimationFrame(ViewRunning,ImageRunning[1])
 	AddSpriteAnimationFrame(ViewRunning,ImageRunning[2])
 	AddSpriteAnimationFrame(ViewRunning,ImageRunning[3])
@@ -1469,6 +1498,7 @@ function LoadGame()
 		Player.Day = val(ReadLine(FileID))
 		CloseFile(FileID)
 	endif
+	Player.Day = Player.Day - 1
 	NewDay()
 	LastSecond = 0
 	CurrentSecond = 0
@@ -1493,6 +1523,8 @@ endfunction
 //Start a New Date
 function NewDay()
 	CurrentDay = CurrentDay + 1
+	Player.Day = Player.Day + 1
+	SetTextString(LabelDays,"Day " + str(Player.Day))
 	for i = 1 to NumLocations
 		
 			
@@ -1566,6 +1598,10 @@ function NewDay()
 		
 		
 	next i
+	if Player.Day = 30 and Player.Cash < 500000
+		GameOver = 2
+		Busted()
+	endif
 	
 endfunction
 
@@ -1659,6 +1695,7 @@ function SetUI()
 	SetSpriteDepth(ViewMapLogo,1)
 	SetSpritePosition(ViewGotAway, ViewLeft  + (1136/ 2) - (GetSpriteWidth(ViewGotAway) / 2), ViewTop + (640 / 2) - (GetSpriteHeight(ViewGotAway) / 2))
 	SetSpriteDepth(ViewGotAway,0)
+	SetTextPosition(LabelDays, ViewLeft + ScreenWidth / 2,ViewTop + 50)
 endfunction
 
 //Start Selling Resources
@@ -1711,6 +1748,11 @@ function StartSelling()
 	SetSpriteColor(SceneUI.StopSellingButton,200,200,200,255)
 	SetSpriteDepth(SceneUI.StopSellingButton,1)
 	ResetTimer()
+	if Player.TutorialState < 3
+		Player.TutorialState = 3
+	endif
+	
+
 	CurrentSecond = 0
 	LastSecond = 0
 endfunction
@@ -1825,7 +1867,7 @@ endfunction
 //Stop Running from the Cops
 function StopRunning()
 	HideElements()
-
+	//Player.Energy = Player.Energy + 1
 	SetSpriteVisible(ViewRunning,0)
 	SetSpriteVisible(ViewRunningBackground,0)
 	SetSpriteVisible(ViewRunningBackgroundBlank,0)
@@ -2121,7 +2163,6 @@ function CheckInput()
 				endif
 			endif
 		endif
-		
 	
 			if GetPointerState() = 1
 				pX = GetPointerX()
@@ -2331,17 +2372,17 @@ function CheckInput()
 			pX = pX + ViewLeft
 			pY = pY + ViewTop
 			
-			SetSpriteColor(SceneUI.BounceButton,255,255,255,255)
-			SetSpriteColor(SceneUI.SellButton,255,255,255,255)
+			SetSpriteColor(SceneUI.BounceButton,200,200,200,255)
+			SetSpriteColor(SceneUI.SellButton,200,200,200,255)
 			
 			if pX > GetSpriteX(SceneUI.SellButton) and pX < GetSpriteX(SceneUI.SellButton) + GetSpriteWidth(SceneUI.SellButton)
 				if pY > GetSpriteY(SceneUI.SellButton) and pY < GetSpriteY(SceneUI.SellButton) + GetSpriteHeight(SceneUI.SellButton)
-					SetSpriteColor(SceneUI.SellButton,50,255,50,255)
+					SetSpriteColor(SceneUI.SellButton,255,255,255,255)
 				endif
 			endif
 			if pX > GetSpriteX(SceneUI.BounceButton) and pX < GetSpriteX(SceneUI.BounceButton) + GetSpriteWidth(SceneUI.BounceButton)
 				if pY > GetSpriteY(SceneUI.BounceButton) and pY < GetSpriteY(SceneUI.BounceButton) + GetSpriteHeight(SceneUI.BounceButton)
-					SetSpriteColor(SceneUI.BounceButton,255,50,50,255)
+					SetSpriteColor(SceneUI.BounceButton,255,255,255,255)
 				endif
 			endif
 			
@@ -2676,6 +2717,19 @@ function CheckInput()
 			//Show the Scene
 			if wX > Button[ButtonGoToLocation].X and wX < Button[ButtonGoToLocation].X + Button[ButtonGoToLocation].Width
 				if wY > Button[ButtonGoToLocation].Y and wY < Button[ButtonGoToLocation].Y + Button[ButtonGoToLocation].Height
+					if CurrentLocation = 1
+						LastViewTop = ViewTop
+						LastViewLeft = ViewLeft
+						//ShowScene(CurrentLocation)
+						tmpLocation = CurrentLocation
+						StartMoving()
+						PlaySound(SoundClick)
+						exitfunction
+					endif
+					if Player.Energy <= 0
+						ShowMap()
+						ShowObjective(1)
+					endif
 					if Player.Energy > 0
 						LastViewTop = ViewTop
 						LastViewLeft = ViewLeft
@@ -3071,6 +3125,33 @@ function ShowScene(ID as Integer)
 		SetSpriteDepth(SceneUI.Slider2,1)
 		SetSpriteDepth(SceneUI.Slider3,1)
 		SetSpriteVisible(Location[Player.CurrentLocation].MapSprite,0)
+		if Player.TutorialState = 1
+			SetSpriteVisible(ViewTutorial,1)
+			SetSpritePosition(ViewTutorial, ViewLeft + 280, ViewTop + 200)
+			SetTextString(LabelTutorial,"Use the sliders to buy drugs from the thugs!")
+			SetTextVisible(LabelTutorial,1)
+			SetTextPosition(LabelTutorial,ViewLeft + 280 + GetSpriteWidth(ViewTutorial) / 2, ViewTop + 210)
+			SetSpriteDepth(ViewTutorial,1)
+			SetTextDepth(LabelTutorial,1)
+		endif
+		if Player.TutorialState = 2
+			SetSpriteVisible(ViewTutorial,1)
+			SetSpritePosition(ViewTutorial, ViewLeft + 280, ViewTop + 200)
+			SetTextString(LabelTutorial,"Bounce and find a spot to sell these drugs!")
+			SetTextVisible(LabelTutorial,1)
+			SetTextPosition(LabelTutorial,ViewLeft + 280 + GetSpriteWidth(ViewTutorial) / 2, ViewTop + 210)
+			SetSpriteDepth(ViewTutorial,1)
+			SetTextDepth(LabelTutorial,1)
+		endif
+		if Player.TutorialState = 4
+			SetSpriteVisible(ViewTutorial,1)
+			SetSpritePosition(ViewTutorial, ViewLeft + 280, ViewTop + 200)
+			SetTextString(LabelTutorial,"Buy cheap, sell high, get rich! Don't forget to sleep!")
+			SetTextVisible(LabelTutorial,1)
+			SetTextPosition(LabelTutorial,ViewLeft + 280 + GetSpriteWidth(ViewTutorial) / 2, ViewTop + 210)
+			SetSpriteDepth(ViewTutorial,1)
+			SetTextDepth(LabelTutorial,1)
+		endif
 	endif
 	
 	//If we are at a Sell Location!
@@ -3324,6 +3405,24 @@ function ShowScene(ID as Integer)
 		SetTextString(SceneUI.ProcessTitleLabel,"Sold:")
 		NewHeatbarWidth = Location[Player.CurrentLocation].CurrentHeat / GetSpriteWidth(SceneUI.HeatbarBackground) / (100 / GetSpriteWidth(SceneUI.HeatbarBackground)) * GetSpriteWidth(SceneUI.HeatbarBackground)
 		OldHeatbarWidth = Location[Player.CurrentLocation].CurrentHeat / GetSpriteWidth(SceneUI.HeatbarBackground) / (100 / GetSpriteWidth(SceneUI.HeatbarBackground)) * GetSpriteWidth(SceneUI.HeatbarBackground)
+		if Player.TutorialState = 3
+			SetSpriteVisible(ViewTutorial,1)
+			SetSpritePosition(ViewTutorial, ViewLeft + 280, ViewTop + 200)
+			SetTextString(LabelTutorial,"Start selling, if you get busted, run away!")
+			SetTextVisible(LabelTutorial,1)
+			SetTextPosition(LabelTutorial,ViewLeft + 280 + GetSpriteWidth(ViewTutorial) / 2, ViewTop + 210)
+			SetSpriteDepth(ViewTutorial,1)
+			SetTextDepth(LabelTutorial,1)
+		endif
+		if Player.TutorialState = 4
+			SetSpriteVisible(ViewTutorial,1)
+			SetSpritePosition(ViewTutorial, ViewLeft + 280, ViewTop + 200)
+			SetTextString(LabelTutorial,"Buy cheap, sell high, get rich! Don't forget to sleep!")
+			SetTextVisible(LabelTutorial,1)
+			SetTextPosition(LabelTutorial,ViewLeft + 280 + GetSpriteWidth(ViewTutorial) / 2, ViewTop + 210)
+			SetSpriteDepth(ViewTutorial,1)
+			SetTextDepth(LabelTutorial,1)
+		endif
 	endif
 	SetSpriteVisible(ViewItsTheCops,0)
 	LastWindow = GameStateInScene
@@ -3424,6 +3523,7 @@ function GoToSleep()
 	SetSpriteVisible(ViewBackgroundSleep,1)
 	SetSpriteDepth(ViewBackgroundSleep,0)
 	SetSpritePosition(ViewBackgroundSleep,ViewLeft,ViewTop)
+	NewDay()
 	SaveGame()
 endfunction
 
@@ -3487,16 +3587,29 @@ function ShowMap()
 		SetSpriteVisible(Location[3].MapSprite,1)
 	endif
 	
-	if Player.Energy <= 0
-		ShowObjective(1)
-	endif
 	
+	SetTextVisible(LabelDays,1)
+	SetTextPosition(LabelDays, ViewLeft + ScreenWidth / 2,ViewTop + 100)
+	SetTextDepth(LabelDays,1)
 	
+	SaveGame()
 	
 	//message("HERE")
 	//Reset the UI Elements
 	SetUI()
 	SetSpriteDepth(ViewGotAway,0)
+	if Player.TutorialState = 2
+		Player.TutorialState = 3
+		exitfunction
+	endif
+	if Player.TutorialState = 3
+		Player.TutorialState = 4
+		exitfunction
+	endif
+	if Player.TutorialState = 4
+		Player.TutorialState = 5
+		exitfunction
+	endif
 endfunction
 
 //Show the Messages from the Users Phone
@@ -3553,7 +3666,7 @@ function ShowObjective(ID as integer)
 	SetTextString(LabelObjective,Objective[ID].LabelString)
 	SetTextPosition(LabelObjective,ViewLeft + (ScreenWidth / 2), ViewTop + 300)
 	Button[ButtonAcceptObjective].X = ViewLeft + (ScreenWidth / 2) - (GetSpriteWidth(Button[ButtonAcceptObjective].Sprite) / 2)
-	Button[ButtonAcceptObjective].Y = 400
+	Button[ButtonAcceptObjective].Y = ViewTop + 400
 	SetTextVisible(Button[ButtonAcceptObjective].Label,1)
 	SetSpritePosition(Button[ButtonAcceptObjective].Sprite,Button[ButtonAcceptObjective].X,Button[ButtonAcceptObjective].Y)
 	SetTextPosition(Button[ButtonAcceptObjective].Label,Button[ButtonAcceptObjective].X + 180,Button[ButtonAcceptObjective].Y + 20)
@@ -3626,6 +3739,13 @@ function Busted()
 		Cost = 100000
 	endif
 	
+	if GameOver = 2
+		SetSpriteVisible(ViewBusted,0)
+		SetTextString(LabelBusted,"You didn't earn back the $500,000 in bad debt.  You were never heard from again.  Fuck.")
+		SetTextString(Button[ButtonBustedContinue].Label,"Return to main Menu")
+		GameOver = 1
+		exitfunction
+	endif
 	//If they can afford it! Let's post bail!
 	if Player.Cash => Cost
 		Player.Cash = Player.Cash - Cost
@@ -3683,6 +3803,7 @@ function NewGame()
 	Player.Energy = 10
 	Player.CurrentMessage = 1
 	Player.TutorialState = 1
+	Player.Day = 0
 	SetSpriteVisible(Player.Sprite,1)
 	SetSpritePosition(Player.Sprite,Player.X,Player.Y)
 	NewDay()
@@ -3812,6 +3933,7 @@ function HideElements()
 	SetTextVisible(SceneUI.MoneyLabel,0)
 	SetTextVisible(LabelMessageTitle,0)
 	SetTextVisible(LabelMessageBody,0)
+	SetTextVisible(LabelDays,0)
 	
 	SetSpriteVisible(SceneUI.Background,0)
 	SetSpriteVisible(SceneUI.Resource1Checkbox,0)
@@ -3873,7 +3995,8 @@ function HideElements()
 	SetSpriteVisible(ViewBusted,0)
 	SetTextVisible(LabelBusted,0)
 	SetSpriteVisible(ViewBackgroundSleep,0)
-	
+	SetSpriteVisible(ViewTutorial,0)
+	SetTextVisible(LabelTutorial,0)
 endfunction
 
 //Show the Location Information when you click on a new location
